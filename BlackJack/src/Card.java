@@ -1,11 +1,11 @@
 
 public class Card {
-  
-  private boolean dealerstatus;
-  
-  public boolean isDealer()
-  {
-    
-  }
-
+	private int suit;
+	private int value;
+	
+	public Card(int s, int v)
+	{
+		suit = s;
+		value = v;
+	}
 }
