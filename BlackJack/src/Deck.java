@@ -12,4 +12,9 @@ public class Deck {
 			for(int value = 1; value < 14; value++)
 				deck.add(new Card(suit, value));
 	}
+	
+	public Card deal()
+	{
+		return deck.remove( (int)(Math.random() * deck.size()));
+	}
 }
