@@ -2,6 +2,7 @@
 public class Card {
 	private int suit;
 	private int value;
+	private ImageIcon image;
 	
 	public Card(int s, int v)
 	{
