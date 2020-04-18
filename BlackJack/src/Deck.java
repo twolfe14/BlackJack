@@ -10,7 +10,7 @@ public class Deck {
 		
 		for(int suit = 1 ; suit < 4 ; suit++)
 			for(int value = 1; value < 14; value++)
-				deck.add(new Card(suit, value));
+				deck.add(new Card(value, suit));
 	}
 	
 	public Card deal()
