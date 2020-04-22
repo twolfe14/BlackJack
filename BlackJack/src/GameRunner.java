@@ -28,17 +28,18 @@ public class GameRunner extends JFrame{
 		//Run the Game as long as both players have not passed
 		while( !(player.hasPassed() && dealer.hasPassed()) )
 		{
-			//Sum up the card values in each player's hand
+			//Act for each player in the game
 			for(Player p : players) {
-				int sumVals = 0;
-				for(Card c : p.getHand())
-					sumVals += c.getValue();
 				
-				//Determine whether to hit or not (will not hit if sum of values is 17 or higher)
-				if(sumVals < 17) {
+				//Determine whether to hit or not (will not hit if sum of card values is 17 or higher)
+				if(p.sumCards() < 17) {
 					Card temp = deck.deal();
 					System.out.println(p + " drew a " + temp);
 					p.hit(temp);
+					
+					//Player will bust if their cards' sum is over 21
+					if(p.sumCards() > 21)
+						p.bust();
 				}				
 				else 
 					p.pass();		
@@ -47,7 +48,10 @@ public class GameRunner extends JFrame{
 		
 		//Print out each player's hand
 		for(Player p : players){
-			System.out.println(p + "'s hand: " + p.getHand());
+			System.out.print(p + "'s hand: " + p.getHand());
+			if(p.hasBusted())
+				System.out.print(" (BUST)");
+			System.out.println();
 		}
 		
 	}
