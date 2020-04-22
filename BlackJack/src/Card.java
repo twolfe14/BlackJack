@@ -19,20 +19,61 @@ public class Card {
 			
 		
 		value = v;
-		if(value == 1)
+		if(value == 1) {
 			image = new JLabel(new ImageIcon(getClass().getResource("A" + suit +".png")));
-		else if(value == 11)
+		}
+		else if(value == 11) {
 			image = new JLabel(new ImageIcon(getClass().getResource("J" + suit +".png")));
-		else if(value == 12)
+			value = 10;
+		}
+		else if(value == 12) {
 			image = new JLabel(new ImageIcon(getClass().getResource("Q" + suit +".png")));
-		else if(value == 13)
+			value = 10;
+		}
+		else if(value == 13) {
 			image = new JLabel(new ImageIcon(getClass().getResource("K" + suit +".png")));
+			value = 10;
+		}
 		else
 			image = new JLabel(new ImageIcon(getClass().getResource(""+ value + suit +".png")));
+	}
+	
+	public int getValue()
+	{
+		return value;
 	}
 	
 	public JLabel getImage()
 	{
 		return image;
 	}
+	
+	public String toString()
+	{
+		String output = "";
+			
+		if(value == 1)
+			output += "Ace ";
+		else if(value == 11)
+			output += "Jack ";
+		else if(value == 12)
+			output += "Queen ";
+		else if(value == 13)
+			output += "King ";
+		else
+			output += value + " ";
+		
+		if(suit == 'H')
+			output += "of Hearts";
+		else if(suit == 'D')
+			output += "of Diamonds";
+		else if(suit == 'C')
+			output += "of Clubs";
+		else
+			output += "of Spades";
+			
+		
+		return output;
+	}
 }
+
