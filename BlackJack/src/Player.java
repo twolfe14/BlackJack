@@ -8,6 +8,7 @@ public class Player {
 	private Canvas cards;
 	private boolean pass;
 	private String name;
+	private boolean bust;
 	
 	public Player(String n)
 	{
@@ -16,6 +17,7 @@ public class Player {
 		isDealer = false;
 		cards = new Canvas();
 		pass = false;
+		bust = false;
 	}
 	
 	public void hit(Card c)
@@ -48,10 +50,29 @@ public class Player {
 		return hand;
 	}
 	
+	public int sumCards()
+	{
+		int sumVals = 0;
+		for(Card c : hand)
+			sumVals += c.getValue();
+			
+		return sumVals;
+	}
+	
 	public Canvas getCards()
 	{
 		//redraw all the cards for every move
 		return cards;
+	}
+	
+	public void bust()
+	{
+		bust = true;
+	}
+	
+	public boolean hasBusted()
+	{
+		return bust;
 	}
 		
 	public String toString()
