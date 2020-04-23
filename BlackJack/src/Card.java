@@ -1,79 +1,121 @@
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import java.awt.*;
+import java.util.ArrayList;
 
-public class Card {
-	private char suit;
-	private int value;
-	private JLabel image;
-	
-	public Card(int v, int s)
-	{
-		if(s == 1)
-			suit = 'H';
-		else if(s == 2)
-			suit = 'D';
-		else if(suit == 3)
-			suit = 'C';
-			else 
-			suit = 'S';
-			
+import javax.swing.*;
+
+
+public class GameRunner extends JFrame{
+
+	GameRunner(){
+		setLayout(new FlowLayout());
 		
-		value = v;
-		if(value == 1) {
-			image = new JLabel(new ImageIcon(getClass().getResource("A" + suit +".png")));
-		}
-		else if(value == 11) {
-			image = new JLabel(new ImageIcon(getClass().getResource("J" + suit +".png")));
-			value = 10;
-		}
-		else if(value == 12) {
-			image = new JLabel(new ImageIcon(getClass().getResource("Q" + suit +".png")));
-			value = 10;
-		}
-		else if(value == 13) {
-			image = new JLabel(new ImageIcon(getClass().getResource("K" + suit +".png")));
-			value = 10;
-		}
-		else
-			image = new JLabel(new ImageIcon(getClass().getResource(""+ value + suit +".png")));
-	}
-	
-	public int getValue()
-	{
-		return value;
-	}
-	
-	public JLabel getImage()
-	{
-		return image;
-	}
-	
-	public String toString()
-	{
-		String output = "";
-			
-		if(value == 1)
-			output += "Ace ";
-		else if(value == 11)
-			output += "Jack ";
-		else if(value == 12)
-			output += "Queen ";
-		else if(value == 13)
-			output += "King ";
-		else
-			output += value + " ";
+		//Instantiate Deck
+		Deck deck = new Deck();
 		
-		if(suit == 'H')
-			output += "of Hearts";
-		else if(suit == 'D')
-			output += "of Diamonds";
-		else if(suit == 'C')
-			output += "of Clubs";
-		else
-			output += "of Spades";
-			
+		//Create Array of Players
+		Player[] players = new Player[2];
+		Player player = new Player("Player");
+		Player dealer = new Player("Dealer");
+		players[0] = player;
+		players[1] = dealer;
+		dealer.setDealer(true);
 		
-		return output;
+		//Deal in each play 2 cards from the deck
+		for(Player p : players){
+			p.hit(deck.deal());
+			p.hit(deck.deal());
+		}
+		
+		//Run the Game as long as both players have not passed
+		while( !(player.hasPassed() && dealer.hasPassed()) )
+		{
+			//Act for each player in the game
+			for(Player p : players) {
+				
+				//Determine whether to hit or not (will not hit if sum of card values is 17 or higher)
+				
+				//Special Ace Case
+				if(p.howmanyAces() != 0)
+				{
+					//Access the hand of the player if they have an ace or more
+					ArrayList<Card> tempHand = p.getHand();
+				
+					//A.K.A. if this is the first round
+					if(tempHand.size() == 2)
+					{
+						//If the player has only one ace...
+						if(p.howmanyAces() == 1)
+						{
+							int nonAceValue = 0;
+							for(int i = 0; i < tempHand.size(); i++)
+							{
+								if(tempHand.get(i).getValue() != 1)
+									nonAceValue = tempHand.get(i).getValue();
+							}
+							
+							//Player will pass if the sum is 19 or higher
+							if((nonAceValue + 11) >= 19 && (nonAceValue + 11) < 22)
+							{
+								//BlackJack case
+								if((nonAceValue + 11) == 21 && nonAceValue == 11)
+								{
+									System.out.println("Player " + p + "has gotten a BlackJack!");
+								}
+								else
+									p.pass();
+							}
+							//Player did not have a sum 19 or higher, thus they are hitting if the sum is less than 17
+							else {
+								Card temp3 = deck.deal();
+								System.out.println(p + " drew a " + temp3);
+								p.hit(temp3);
+							}
+						}
+						
+						//If the player has two aces, the player will hit
+						if(p.howmanyAces() == 2)
+						{
+							Card temp2 = deck.deal();
+							System.out.println(p + " drew a " + temp2);
+							p.hit(temp2);
+						}
+					}
+				}
+				else {
+					if(p.sumCards() < 17) {
+						Card temp = deck.deal();
+						System.out.println(p + " drew a " + temp);
+						p.hit(temp);
+						
+						//Player will bust if their cards' sum is over 21
+						if(p.sumCards() > 21)
+							p.bust();
+					}				
+					else 
+						p.pass();		
+				}
+			}
+		}
+		
+		//Print out each player's hand
+		for(Player p : players){
+			System.out.print(p + "'s hand: " + p.getHand());
+			if(p.hasBusted())
+				System.out.print(" (BUST)");
+			System.out.println();
+		}
+		
 	}
+	
+	public static void main(String[] args) {
+		
+		GameRunner go = new GameRunner();
+
+		go.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		go.setVisible(false);
+		go.pack();
+		
+		
+	}
+
 }
-
