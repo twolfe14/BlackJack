@@ -59,6 +59,18 @@ public class Player {
 		return sumVals;
 	}
 	
+	public int howmanyAces()
+	{
+		int count = 0;
+		for(Card c : hand)
+		{
+			if(c.getValue() == 1)
+				count++;
+		}
+	
+		return count;
+	}
+	
 	public Canvas getCards()
 	{
 		//redraw all the cards for every move
@@ -74,7 +86,7 @@ public class Player {
 	{
 		return bust;
 	}
-		
+	
 	public String toString()
 	{
 		return name;
