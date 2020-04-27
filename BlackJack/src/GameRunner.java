@@ -1,13 +1,14 @@
+
 import java.awt.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
 
 
-public class GameRunner extends JFrame{
+public class GameRunner{
 
-	GameRunner(){
-		setLayout(new FlowLayout());
+	
+	public static void main(String[] args) {
 		
 		//Instantiate Deck
 		Deck deck = new Deck();
@@ -26,14 +27,23 @@ public class GameRunner extends JFrame{
 			p.hit(deck.deal());
 		}
 		
+		for(int i = players.length-1 ; i >= 0 ; i--)
+		{
+			if(players[i].sumCards() == 21) {
+				System.out.println(players[i] + " was dealt a BlackJack!");
+				
+				for(Player p: players)
+					p.pass();
+			}
+		}
+		
 		//Run the Game as long as both players have not passed
-		while( !(player.hasPassed() && dealer.hasPassed()) )
+		while( !(player.hasPassed() && dealer.hasPassed()) && !dealer.hasBlackJacked())
 		{
 			//Act for each player in the game
 			for(Player p : players) {
 				
-				//Determine whether to hit or not (will not hit if sum of card values is 17 or higher)
-				
+			while(!p.hasPassed()) {
 				//Special Ace Case
 				if(p.howmanyAces() != 0)
 				{
@@ -45,27 +55,14 @@ public class GameRunner extends JFrame{
 					{
 						//If the player has only one ace...
 						if(p.howmanyAces() == 1)
-						{
-							int nonAceValue = 0;
-							for(int i = 0; i < tempHand.size(); i++)
-							{
-								if(tempHand.get(i).getValue() != 1)
-									nonAceValue = tempHand.get(i).getValue();
-							}
-							
+						{						
 							//Player will pass if the sum is 19 or higher
-							if((nonAceValue + 11) >= 19 && (nonAceValue + 11) < 22)
+							if(p.sumCards() >= 18)
 							{
-								//BlackJack case
-								if((nonAceValue + 11) == 21 && nonAceValue == 11)
-								{
-									System.out.println("Player " + p + "has gotten a BlackJack!");
-								}
-								else
-									p.pass();
+								p.pass();
 							}
 							//Player did not have a sum 19 or higher, thus they are hitting if the sum is less than 17
-							else {
+							else {  
 								Card temp3 = deck.deal();
 								System.out.println(p + " drew a " + temp3);
 								p.hit(temp3);
@@ -76,46 +73,60 @@ public class GameRunner extends JFrame{
 						if(p.howmanyAces() == 2)
 						{
 							Card temp2 = deck.deal();
+							p.getHand().get(0).setValue(1);
 							System.out.println(p + " drew a " + temp2);
 							p.hit(temp2);
 						}
 					}
 				}
-				else {
+
 					if(p.sumCards() < 17) {
 						Card temp = deck.deal();
 						System.out.println(p + " drew a " + temp);
 						p.hit(temp);
 						
-						//Player will bust if their cards' sum is over 21
-						if(p.sumCards() > 21)
-							p.bust();
+						//Player will bust if their cards' sum is over 21, unless they have an Ace
+						if(p.sumCards() > 21) {
+							for(Card c : p.getHand())
+								if(c.getValue() == 11)
+									c.setValue(1);	
+							if(p.sumCards() > 21)
+								p.bust();
+						}
 					}				
 					else 
-						p.pass();		
-				}
+					p.pass();		
+				
 			}
+		  }
 		}
 		
 		//Print out each player's hand
+		System.out.println();
 		for(Player p : players){
-			System.out.print(p + "'s hand: " + p.getHand());
+			System.out.print(p + "'s hand: " + p.getHand() +" "+ p.sumCards());
 			if(p.hasBusted())
 				System.out.print(" (BUST)");
 			System.out.println();
 		}
 		
-	}
+		System.out.println();
+		
+		if(player.hasBusted())
+			System.out.print("Dealer WINS!");
+		else if(player.sumCards() == dealer.sumCards())
+			System.out.print("PUSH!");
+		else if(!dealer.hasBusted() && !player.hasBusted() && 21 - player.sumCards() < 21 - dealer.sumCards())
+			System.out.print("Player WINS!");
+		else if(!dealer.hasBusted() && !player.hasBusted() && 21 - player.sumCards() > 21 - dealer.sumCards())
+			System.out.print("Dealer WINS!");
+		else if(dealer.hasBusted())
+			System.out.print("Player WINS!");
+		else
+			System.out.print("This shouldn't happen");
+		
+		if(player.hasBlackJacked() || dealer.hasBlackJacked())
+			System.out.print(" Blackjack!");
 	
-	public static void main(String[] args) {
-		
-		GameRunner go = new GameRunner();
-
-		go.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		go.setVisible(false);
-		go.pack();
-		
-		
 	}
-
 }
