@@ -21,6 +21,7 @@ public class Card {
 		value = v;
 		if(value == 1) {
 			image = new JLabel(new ImageIcon(getClass().getResource("A" + suit +".png")));
+			value = 11;
 		}
 		else if(value == 11) {
 			image = new JLabel(new ImageIcon(getClass().getResource("J" + suit +".png")));
@@ -43,6 +44,11 @@ public class Card {
 		return value;
 	}
 	
+	public void setValue(int v)
+	{
+		value = v;
+	}
+	
 	public JLabel getImage()
 	{
 		return image;
@@ -52,7 +58,7 @@ public class Card {
 	{
 		String output = "";
 			
-		if(value == 1)
+		if(value == 11 || value == 1)
 			output += "Ace ";
 		else if(value == 11)
 			output += "Jack ";
