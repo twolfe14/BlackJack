@@ -71,6 +71,13 @@ public class Player {
 		return count;
 	}
 	
+	public boolean hasBlackJacked()
+	{
+		if(sumCards() == 21)
+			return true;
+		return false;
+	}
+	
 	public Canvas getCards()
 	{
 		//redraw all the cards for every move
